@@ -1,0 +1,26 @@
+{
+  "name": "MILYONDOLARWORDLEJS",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "glob": "^7.2.0"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "startdev": "ts-node-dev src/index.ts",
+    "startprod": "node dist/index.js",
+    "build": "tsc",
+    "watch": "tsc -w"
+
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/node": "^17.0.16",
+    "ts-node": "^10.5.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  }
+}
