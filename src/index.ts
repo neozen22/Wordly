@@ -1,6 +1,6 @@
-import { ExtendedClient } from "./stuructures/Client";
+import { WordleClient } from "./stuructures/Client";
 
 require('dotenv').config();
 
-export const Client = new ExtendedClient();
+export const Client = new WordleClient();
 Client.start()

@@ -1,16 +1,13 @@
-import { ApplicationCommandData, ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from "discord.js";
+import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from "discord.js";
 import { CommandType } from "../typings/Command";
-import { glob } from "glob";
-import { promisify} from "util";
 import { RegisterCommandsOptions } from "../typings/client";
-import { fileURLToPath } from "url";
 import { Event } from "./Event";
 import path from "path";
 import fs from "fs";
 
-const globPromise = promisify(glob) 
 
-export class ExtendedClient extends Client {
+
+export class WordleClient extends Client {
     commands: Collection<String, CommandType> = new Collection;
     constructor() {
         super( {intents: 32767});
@@ -40,21 +37,24 @@ export class ExtendedClient extends Client {
         // Commands
         const slashCommands:ApplicationCommandDataResolvable[] = []
         const commandFiles = fs.readdirSync(path.join(__dirname, '../commands/')).filter(x => x.endsWith('.js') || x.endsWith('.ts'))
-        console.log(`CommandFiles: ${commandFiles}`)
         commandFiles.forEach(async fileName => {
             const command:CommandType = await this.importFile(path.join(__dirname, '../commands/', fileName))
-            if (!command.name) return;
+            if (!command.name) {
+                console.log(`${command} couldn't be pushed!`);
+                return;
+                
+            };
             this.commands.set(command.name, command);
-            slashCommands.push(command)
             console.log(`Command Pushed: ${command.name}`);
+            slashCommands.push(command)
             
         })
 
-    const eventFiles = fs.readdirSync(path.join(__dirname, '../events/')).filter(x => x.endsWith('.js') || x.endsWith('.ts'))
-    
-    eventFiles.forEach(async fileName => {
-        const event: Event<keyof ClientEvents>  = await this.importFile(path.join(__dirname ,'../events',fileName ))
-        this.on(event.event, event.run)
+        const eventFiles = fs.readdirSync(path.join(__dirname, '../events/')).filter(x => x.endsWith('.js') || x.endsWith('.ts'))
+        
+        eventFiles.forEach(async fileName => {
+            const event: Event<keyof ClientEvents>  = await this.importFile(path.join(__dirname ,'../events',fileName ))
+            this.on(event.event, event.run)
     })
     }
 
