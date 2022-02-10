@@ -1,4 +1,4 @@
-import { ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandDataResolvable, Client, ClientEvents, Collection } from "discord.js";
 import { CommandType } from "../typings/Command";
 import { RegisterCommandsOptions } from "../typings/client";
 import { Event } from "./Event";
@@ -23,30 +23,36 @@ export class WordleClient extends Client {
         return (await import(filePath))?.default; 
     }
 
-    async registerCommands({commands, guildID}: RegisterCommandsOptions) {
-        if (guildID){
-            this.guilds.cache.get(guildID)?.commands.set(commands);
-            console.log(`Registering commands to $(guildID)`)
+    async registerCommands({commands, guildId}: RegisterCommandsOptions) {
+        if (guildId){
+            this.guilds.cache.get(guildId)?.commands.set(commands);
+            console.log(`Registering commands to ${guildId}`)
         } else {
-            this.application?.commands.set(commands);
             console.log(`Registering global commands...`)
+            this.application?.commands.set(commands)
+            .catch(console.error)
+            
+            
+            
         }
     }
 
     async registerModules() {
         // Commands
-        const slashCommands:ApplicationCommandDataResolvable[] = []
+        const slashCommands:Array<ApplicationCommandData> = []
         const commandFiles = fs.readdirSync(path.join(__dirname, '../commands/')).filter(x => x.endsWith('.js') || x.endsWith('.ts'))
         commandFiles.forEach(async fileName => {
             const command:CommandType = await this.importFile(path.join(__dirname, '../commands/', fileName))
+
+        
             if (!command.name) {
                 console.log(`${command} couldn't be pushed!`);
                 return;
                 
             };
             this.commands.set(command.name, command);
-            console.log(`Command Pushed: ${command.name}`);
             slashCommands.push(command)
+            console.log(`Command Pushed: ${command.name}`);
             
         })
 
@@ -56,6 +62,12 @@ export class WordleClient extends Client {
             const event: Event<keyof ClientEvents>  = await this.importFile(path.join(__dirname ,'../events',fileName ))
             this.on(event.event, event.run)
     })
+    this.on("ready", () => {    
+        this.registerCommands({
+            commands: slashCommands
+            
+        })
+    });
     }
 
        
