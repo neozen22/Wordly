@@ -1,4 +1,4 @@
-import { Collection, CommandInteractionOptionResolver, Emoji } from "discord.js";
+import { ApplicationCommandData, ApplicationCommandOptionData, Collection, CommandInteractionOptionResolver, Emoji } from "discord.js";
 import { ApplicationCommandTypes } from "discord.js/typings/enums";
 import { Command } from "../stuructures/Command";
 import { CommandType } from "../typings/Command";
@@ -32,7 +32,7 @@ const EMOJI_CODES = {
         w: "<:1f1fc:938280353502752850>",
         x: "<:1f1fd:938280354043789382>",
         y: "<:1f1fe:938280840796995638>",
-        z: "<:1f1ff:938280841199616000>",
+        z: "<:1f1ff:938280841199616000>"
     },
     yellow: {
         a: "<:1f1e6:938280773906227230>",
@@ -60,7 +60,7 @@ const EMOJI_CODES = {
         w: "<:1f1fc:938280774006898749>",
         x: "<:1f1fd:938280774065618984>",
         y: "<:1f1fe:938280774115934228>",
-        z: "<:1f1ff:938280774145310801>",
+        z: "<:1f1ff:938280774145310801>"
     },
     gray: {
         a: "<:1f1e6:938280277627785347>",
@@ -88,7 +88,7 @@ const EMOJI_CODES = {
         w: "<:1f1fc:938280278131085332>",
         x: "<:1f1fd:938280278105944074>",
         y: "<:1f1fe:938280278177218560>",
-        z: "<:1f1ff:938280278215000064>",
+        z: "<:1f1ff:938280278215000064>"
     },
 }
 
@@ -190,12 +190,12 @@ function getRandomInt() {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
   }
 
-const checkWord = (guessWord:string, answer:string) => {
+const checkWord = (guessWord:string, answer:string): string => {
 
     const guessArray = Array.from(guessWord)
     const answerArray = Array.from(answer)
     let answerWord:string = ''
-    for (let letterIndex = 0; letterIndex <= 5; letterIndex++) {
+    for (let letterIndex = 0; letterIndex < 5; letterIndex++) {
         if (answerArray.includes(guessArray[letterIndex])) {
             if (answerArray[letterIndex] == guessArray[letterIndex]) {
                 answerWord += EMOJI_CODES.green[guessArray[letterIndex] as letterCodes]
@@ -209,21 +209,31 @@ const checkWord = (guessWord:string, answer:string) => {
             answerWord += EMOJI_CODES.gray[guessArray[letterIndex] as letterCodes]
             
         }
-        
+    }
+    if (answerWord.includes('undefined')){
+        return 'You Typed in restricted characters!'
     }
     return answerWord
     
 }
 
-
+const word = words[getRandomInt()]
 export default new Command(
     {
     name: "wen",
     description: "Wordle English",
-    run: async ({  interaction, args}) => {
-        console.log(args);
-        
-
-        interaction.followUp('ok')
+    options: [{
+        name: "word",
+        description: "bruh",
+        type: "STRING"
+    }],
+    run: async ({  client, interaction, args }) => {
+        const guessArg: string = (args.get('word')?.value as string);
+        if (guessArg?.length != 5){
+            interaction.followUp('Game is played with 5 letters!')
+        }
+        else{
+            interaction.followUp(checkWord(guessArg , word))
+        }
     }
 })
