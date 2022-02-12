@@ -1,7 +1,7 @@
 import { EmbedField, HexColorString, Message, MessageEmbed, MessageEmbedAuthor, MessageEmbedImage } from "discord.js"
 import { Event } from "../stuructures/Event"
 import { client } from ".."
-import { Game, todayword, words } from "../stuructures/Client"
+import { Game, words } from "../stuructures/Client"
 
 interface field {
     name: string,
@@ -37,8 +37,8 @@ export default new Event('messageCreate', (message) => {
         
         const session = client.sessionMembers.get(message.author.id)
         if (session){
-            const fields = [{name: "wordle", value: session.checkWord(message.content, todayword), inline: false}]
-            console.log(fields[0].value)
+            const fields = [{value: "wordle", name: session.checkWord(message.content, session.word), inline: false}]
+            
             message.reply({embeds: [createEmbed("Wordle", "sj", undefined, fields, "#00000", undefined, "bruh", null)]})
         }   
         else {
@@ -46,6 +46,6 @@ export default new Event('messageCreate', (message) => {
         }
 
     }
-    else {console.log("guild vra");
+
     }
-    });
+    );

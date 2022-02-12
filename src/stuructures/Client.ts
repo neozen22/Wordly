@@ -4,6 +4,7 @@ import { RegisterCommandsOptions } from "../typings/client";
 import { Event } from "./Event";
 import path from "path";
 import fs from "fs";
+import { timeout } from "cron";
 
 
 enum letterCodes {
@@ -94,100 +95,113 @@ export const words: string[]= ["twist","stage","worth","twice","wield","candy","
 "wrist","clerk","pound","staff","start","today","major","quell","glove","lurid","realm","banal","think","crash","would","april","trace","swell","april",
 ]
 
-export const EMOJI_CODES = {
-    green: {
-        a: "<:1f1e6:938280353527906325>",
-        b: "<:1f1e7:938280353515315242>",
-        c: "<:1f1e8:938280353850875928>",
-        d: "<:1f1e9:938280353657929799>",
-        e: "<:1f1ea:938280354064785478>",
-        f: "<:1f1eb:938280353838276609>",
-        g: "<:1f1ec:938280353968291860>",
-        h: "<:1f1ed:938280353871839232>",
-        i: "<:1f1ee:938280354010239016>",
-        j: "<:1f1ef:938280353876021328>",
-        k: "<:1f1f0:938280354148675614>",
-        l: "<:1f1f1:938280353611780107>",
-        m: "<:1f1f2:938280353783775244>",
-        n: "<:1f1f3:938280353670504489>",
-        o: "<:1f1f4:938280354018656316>",
-        p: "<:1f1f5:938280353884414012>",
-        q: "<:1f1f6:938280354253537321>",
-        r: "<:1f1f7:938280354022850561>",
-        s: "<:1f1f8:938280354089947146>",
-        t: "<:1f1f9:938280353691476010>",
-        u: "<:1f1fa:938280353968304138>",
-        v: "<:1f1fb:938280353976696882>",
-        w: "<:1f1fc:938280353502752850>",
-        x: "<:1f1fd:938280354043789382>",
-        y: "<:1f1fe:938280840796995638>",
-        z: "<:1f1ff:938280841199616000>"
-    },
-    yellow: {
-        a: "<:1f1e6:938280773906227230>",
-        b: "<:1f1e7:938280773910409256>",
-        c: "<:1f1e8:938280774057197639>",
-        d: "<:1f1e9:938280773918806066>",
-        e: "<:1f1ea:938280776057905152>",
-        f: "<:1f1eb:938280773977505832>",
-        g: "<:1f1ec:938280774006878208>",
-        h: "<:1f1ed:938280773910429726>",
-        i: "<:1f1ee:938280773998481418>",
-        j: "<:1f1ef:938280773910397028>",
-        k: "<:1f1f0:938280774120132628>",
-        l: "<:1f1f1:938280774011080715>",
-        m: "<:1f1f2:938280773922992138>",
-        n: "<:1f1f3:938280774002688010>",
-        o: "<:1f1f4:938280774065610822>",
-        p: "<:1f1f5:938280774019465286>",
-        q: "<:1f1f6:938280773881057392>",
-        r: "<:1f1f7:938280773994303568>",
-        s: "<:1f1f8:938280774191415357>",
-        t: "<:1f1f9:938280774023647233>",
-        u: "<:1f1fa:938280774002679858>",
-        v: "<:1f1fb:938280773910396979>",
-        w: "<:1f1fc:938280774006898749>",
-        x: "<:1f1fd:938280774065618984>",
-        y: "<:1f1fe:938280774115934228>",
-        z: "<:1f1ff:938280774145310801>"
-    },
-    gray: {
-        a: "<:1f1e6:938280277627785347>",
-        b: "<:1f1e7:938280277703278593>",
-        c: "<:1f1e8:938280277988503633>",
-        d: "<:1f1e9:938280278026231858>",
-        e: "<:1f1ea:938280278038818926>",
-        f: "<:1f1eb:938280277862658059>",
-        g: "<:1f1ec:938280278051405844>",
-        h: "<:1f1ed:938280278126891058>",
-        i: "<:1f1ee:938280277980119120>",
-        j: "<:1f1ef:938280277988507649>",
-        k: "<:1f1f0:938280277900394537>",
-        l: "<:1f1f1:938280277862674503>",
-        m: "<:1f1f2:938280277678100501>",
-        n: "<:1f1f3:938280277866860555>",
-        o: "<:1f1f4:938280278189801502>",
-        p: "<:1f1f5:938280278017867776>",
-        q: "<:1f1f6:938280278097530941>",
-        r: "<:1f1f7:938280278038806538>",
-        s: "<:1f1f8:938280278110138468>",
-        t: "<:1f1f9:938280278055583764>",
-        u: "<:1f1fa:938280278043004958>",
-        v: "<:1f1fb:938280278051418153>",
-        w: "<:1f1fc:938280278131085332>",
-        x: "<:1f1fd:938280278105944074>",
-        y: "<:1f1fe:938280278177218560>",
-        z: "<:1f1ff:938280278215000064>"
-    }
-}
-
-export const todayword = "tunan"
+ export const EMOJI_CODES = {
+     green: {
+        a: '<:green_a:942129436864692284>',
+        b: '<:green_b:942129436520767591>',
+        c: '<:green_c:942129436915019806>',
+        d: '<:green_d:942129436889845840>',
+        e: '<:green_e:942129436868878417>',
+        f: '<:green_f:942129437082804334>',
+        g: '<:green_g:942129436894056508>',
+        h: '<:green_h:942129436864684042>',
+        i: '<:green_i:942129436738863187>',
+        j: '<:green_j:942129436910813234>',
+        k: '<:green_k:942129437133111426>',
+        l: '<:green_l:942129437124722708>',
+        m: '<:green_m:942129436994732062>',
+        n: '<:green_n:942129436998893578>',
+        o: '<:green_o:942129436805980191>',
+        p: '<:green_p:942129436801769535>',
+        q: '<:green_q:942129437061820546>',
+        r: '<:green_r:942129436717887540>',
+        s: '<:green_s:942129437212827679>',
+        t: '<:green_t:942129437212823582>',
+        u: '<:green_u:942160642427744306>',
+        v: '<:green_v:942129437175078972>',
+        w: '<:green_w:942129436810166333>',
+        x: '<:green_x:942129436864700498>',
+        y: '<:green_y:942129437267329104>',
+        z: '<:green_z:942160642377396284>'
+     },
+     yellow: {
+        a: '<:yellow_a:942160674581250110>',
+        b: '<:yellow_b:942160675034239046>',
+        c: '<:yellow_c:942160674749034517>',
+        d: '<:yellow_d:942160674921013328>',
+        e: '<:yellow_e:942160674614824971>',
+        f: '<:yellow_f:942160675013263441>',
+        g: '<:yellow_g:942160674941980692>',
+        h: '<:yellow_h:942160674992316456>',
+        i: '<:yellow_i:942160674983915520>',
+        j: '<:yellow_j:942160674757419009>',
+        k: '<:yellow_k:942160674828718080>',
+        l: '<:yellow_l:942160674837102712>',
+        m: '<:yellow_m:942160674795171891>',
+        n: '<:yellow_n:942160674728050789>',
+        o: '<:yellow_o:942160674895826964>',
+        p: '<:yellow_p:942160674832920627>',
+        q: '<:yellow_q:942160675122339860>',
+        r: '<:yellow_r:942160675155894333>',
+        s: '<:yellow_s:942160674786791524>',
+        t: '<:yellow_t:942160674849685524>',
+        u: '<:yellow_u:942160674795167795>',
+        v: '<:yellow_v:942160675042643968>',
+        w: '<:yellow_w:942160674828726332>',
+        x: '<:yellow_x:942160674895855686>',
+        y: '<:yellow_y:942160674904223764>',
+        z: '<:yellow_z:942160674988105789>'
+     },
+     
+     gray: {
+        a: "<:gray_a:942128589191675914>",
+        b: "<:gray_b:942128615452188774>",
+        c: "<:gray_c:942128648130007070>",
+        d: "<:gray_d:942128688168857610>",
+        e: "<:gray_e:942128713519210527>",
+        f: "<:gray_f:942128736361410571>",
+        g: "<:gray_g:942128771283161129>",
+        h: "<:gray_h:942128801763196969>",
+        i: "<:gray_i:942128828120203325>",
+        j: "<:gray_j:942128882474156082>",
+        k: "<:gray_k:942128909934280745>",
+        l: "<:gray_l:942128930826100746>",
+        m: "<:gray_m:942128960916033558>",
+        n: "<:gray_n:942128995699408896>",
+        o: "<:gray_o:942129032152117248>",
+        p: "<:gray_p:942129055673774081>",
+        q: "<:gray_q:942129082949312523>",
+        r: "<:gray_r:942129123596316702>",
+        s: "<:gray_s:942129149424828487>",
+        t: "<:gray_t:942129180601110568>",
+        u: "<:gray_u:942129199748112455>",
+        v: "<:gray_v:942129219616534611>",
+        w: "<:gray_w:942129256597696562>",
+        x: "<:gray_x:942129287950106694>",
+        y: "<:gray_y:942129318417543178>",
+        z: "<:gray_z:942129358187950090>"
+     }
+ }
 
 export class Game{
     word: string
+    letterIntensityMap: Map<string, number>;
     constructor(){
         this.word = words[this.getRandomInt()]
+       
+        this.letterIntensityMap  = new Map()
+        Array.from(this.word).forEach(letter => {
+            
+                let currentValue = this.letterIntensityMap.get(letter);
+                if (!currentValue) currentValue = 0 
+                this.letterIntensityMap.set(letter, currentValue + 1 )
+                console.log("old letter. Letter count: " + this.letterIntensityMap.get(letter)?.toString());
+                
+                
+            }
+        );
     }
+
         
         getRandomInt() {
             let min:number = 0
@@ -202,25 +216,36 @@ export class Game{
             const guessArray = Array.from(guessWord)
             const answerArray = Array.from(answer)
             let answerWord:string = ''
+            
+            let tempIntensityMap = new Map(this.letterIntensityMap)
+            
+            for (let letterIndex = 0; letterIndex < 5; letterIndex++) {
+                const guessLetter = guessArray[letterIndex];
+                const answerLetter = answerArray[letterIndex];
+                const currentValue = tempIntensityMap.get(guessLetter)
+                if (currentValue && currentValue > 0){
+                        if (guessLetter == answerLetter){
+
+                        answerWord += EMOJI_CODES.green[guessLetter as letterCodes]
+                        tempIntensityMap.set(guessLetter, currentValue - 1 )
+                        continue
+                        
+                    }
+                       else {
+                        console.log(guessLetter + " " + answerLetter    );
+                        answerWord += EMOJI_CODES.yellow[guessLetter as letterCodes]
+                        tempIntensityMap.set(guessLetter, currentValue - 1 )
+                        continue
+                        }
+                }
+            else answerWord += EMOJI_CODES.gray[guessLetter as letterCodes]
+                
+                
+            }
             if (answerWord.includes('undefined')){
                 return 'You Typed in restricted characters!'}
-            for (let letterIndex = 0; letterIndex < 5; letterIndex++) {
-                if (answerArray.includes(guessArray[letterIndex])) {
-                    if (answerArray[letterIndex] == guessArray[letterIndex]) {
-                        answerWord += EMOJI_CODES.green[guessArray[letterIndex] as letterCodes]
-        
-                    }
-                    else {
-                        answerWord += EMOJI_CODES.yellow[guessArray[letterIndex] as letterCodes]
-                    }
-                }
-                else {
-                    answerWord += EMOJI_CODES.gray[guessArray[letterIndex] as letterCodes]
-                    
-                }
             
-
-            }
+            
             return answerWord
         }
         
@@ -235,22 +260,15 @@ export class WordleClient extends Client {
     commands: Collection<String, CommandType> = new Collection;
     constructor() {
         super( {intents: [
-'GUILDS',
-'GUILD_MEMBERS',
-'GUILD_BANS',
-'GUILD_EMOJIS_AND_STICKERS',
-'GUILD_INTEGRATIONS',
-'GUILD_WEBHOOKS',
-'GUILD_INVITES',
-'GUILD_VOICE_STATES',
-'GUILD_PRESENCES',
-'GUILD_MESSAGES',
-'GUILD_MESSAGE_REACTIONS',
-'GUILD_MESSAGE_TYPING',
-'DIRECT_MESSAGES',
-'DIRECT_MESSAGE_REACTIONS',
-'DIRECT_MESSAGE_TYPING',
-'GUILD_SCHEDULED_EVENTS',], partials: ["CHANNEL"]});
+                'GUILDS','GUILD_MEMBERS',
+                'GUILD_EMOJIS_AND_STICKERS','GUILD_INTEGRATIONS',
+                'GUILD_WEBHOOKS','GUILD_INVITES',
+                'GUILD_VOICE_STATES','GUILD_PRESENCES',
+                'GUILD_MESSAGES','GUILD_MESSAGE_REACTIONS',
+                'GUILD_MESSAGE_TYPING','DIRECT_MESSAGES',
+                'DIRECT_MESSAGE_REACTIONS','DIRECT_MESSAGE_TYPING',
+                'GUILD_SCHEDULED_EVENTS','GUILD_BANS'],
+                partials: ['USER' , 'CHANNEL' , 'GUILD_MEMBER' , 'MESSAGE' , 'REACTION' , 'GUILD_SCHEDULED_EVENT']});
         this.sessionMembers = new Map;
         
     }
