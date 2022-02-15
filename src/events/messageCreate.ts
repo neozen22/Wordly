@@ -3,6 +3,7 @@ import { Event } from "../stuructures/Event"
 import { client } from ".."
 import { allWords} from "../stuructures/Client"
 import { type } from "os"
+import {checkWord, handleGame} from "../utils/gameHandlers"
 interface field {
     name: string,
     value: string,
@@ -35,14 +36,16 @@ export default new Event('messageCreate', async (message) => {
     if (!message.author.bot){
         let session = client.sessionMembers.get(message.author.id)
         if (session){
-            message.delete()
-            let word = session.checkWord(message.content.toLowerCase(), session.word.toLowerCase())
+            await message.delete()
             let malMessage: string | undefined = undefined;
             let descArray: string[] = session.gameEmbed.description?.split("\n") || [];
+            let answer = checkWord(message.content, session.word, session.usedLetters)
+            let word = answer.answer
+            let usedLetters = answer.used
+            session.usedLetters = usedLetters
             session.gameEmbed = new MessageEmbed(session.gameEmbed as MessageEmbedOptions)
             .setDescription(descArray.join("\n"))
             if (session.usedLetters) session.gameEmbed.setFields([{name:"Used Letters", value: session.usedLetters}])
-            
             if (message.content.length != 5) malMessage = "This game is played with 5 letters!"    
             if (!allWords.includes(message.content)) malMessage=  "Word not on word list"
             if (typeof word == "boolean") malMessage = "You typed in restricted characters"
@@ -61,7 +64,8 @@ export default new Event('messageCreate', async (message) => {
             else {
             descArray[session.round] = word as string
             session.game?.edit({embeds: [session.gameEmbed.setDescription(descArray.join("\n"))]})
-            
+            session.gameState = handleGame(session.gameState, session.round, message.content.toLowerCase(), session.word.toLocaleLowerCase())
+
             if (session.gameState){
                 message.channel.send({embeds: [createBasicMessageEmbed('**You Have Won!**')]})
                 client.sessionMembers.delete(message.author.id)
@@ -70,8 +74,10 @@ export default new Event('messageCreate', async (message) => {
                 message.channel.send({embeds: [createBasicMessageEmbed('**You Have Lost...**')]})
                 client.sessionMembers.delete(message.author.id)
             }
+            
             session.round += 1
-            }
+            
+        }
         }   
         else {
             return

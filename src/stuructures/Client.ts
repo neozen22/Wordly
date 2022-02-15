@@ -24,10 +24,9 @@ fs.readFile('./src/data/allwords.txt', function(err, data) {
 export class Game{
     word: string
     testWord: string
-    usedLetters: string | undefined;
+    usedLetters: string;
     gameEmbed: MessageEmbed
     gameState: boolean | null;
-    
     letterIntensityMap: Map<string, number>;
     user: User
     round: number
@@ -39,16 +38,13 @@ export class Game{
         this.letterIntensityMap  = new Map()
         this.usedLetters = "No used Letters"
         this.gameEmbed = createEmbed([{name:"Used Letters", value: this.usedLetters,  inline:false}], undefined, (((":white_medium_square:").repeat(5)) + "\n").repeat(6), undefined, {name:user.username, iconURL:user.avatarURL({dynamic:true}) as string})
-        this.round = -1
+        this.round = 0
         this.gameState = null
         this.game = undefined
-        Array.from(this.word).forEach(letter => {
-            
-                let currentValue = this.letterIntensityMap.get(letter);
-                if (!currentValue) currentValue = 0 
-                this.letterIntensityMap.set(letter, currentValue + 1 )
-            }
-        );
+        console.log(this.word);
+        
+
+        ;
     }
 
         
@@ -60,59 +56,6 @@ export class Game{
             return Math.floor(Math.random() * (max - min) + min);
           }
         
-
-
-
-        checkWord = (guessWord:string, answer:string): string | boolean => {
-            
-            const guessArray = Array.from(guessWord.toLowerCase())
-            const answerArray = Array.from(answer.toLowerCase())
-            let answerWord:string = ''
-            let tempIntensityMap = new Map(this.letterIntensityMap)
-            
-            for (let letterIndex = 0; letterIndex < 5; letterIndex++) {
-                const guessLetter = guessArray[letterIndex];
-                const answerLetter = answerArray[letterIndex];
-                const currentValue = tempIntensityMap.get(guessLetter)
-                const greenEmoji = EMOJI_CODES.green[guessLetter as letterCodes]
-                const yellowEmoji = EMOJI_CODES.yellow[guessLetter as letterCodes]
-                const grayEmoji = EMOJI_CODES.gray[guessLetter as letterCodes]
-                if (currentValue && currentValue > 0){
-                        if (guessLetter == answerLetter){
-
-                        answerWord += greenEmoji
-                        tempIntensityMap.set(guessLetter, currentValue - 1 )
-                        continue
-                        
-                    }
-                       else {
-                        answerWord += yellowEmoji
-                        
-                        
-                        }
-                        tempIntensityMap.set(guessLetter, currentValue - 1 )
-                }
-                else{
-                    answerWord += grayEmoji
-                    if (this.usedLetters?.startsWith('N')) this.usedLetters = grayEmoji
-                    if(!this.usedLetters?.includes(grayEmoji)) this.usedLetters += grayEmoji
-
-                }
-                
-                
-            }
-            if (answerWord.includes('undefined')){
-                return false}
-            
-            if (guessWord == answer) this.gameState = true;
-            
-            if (this.round >= 5) this.gameState = false;
-            return answerWord
-        }
-
-        
-        
-    
 }
 
 
