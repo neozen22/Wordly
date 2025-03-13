@@ -1,3 +1,3 @@
 # Wordle-Discord
 
-**Discord clone for the trending game Wordle**
+**Discord implementation for the trending game Wordle**
