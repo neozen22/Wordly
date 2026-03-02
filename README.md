@@ -1,5 +1,5 @@
 # Wordly 🟩🟨⬜
-
+**DEPRECATED (Discord JS update)**
 **A Discord bot that brings the popular word-guessing game Wordle to your server.**
 
 Wordly lets Discord users play Wordle-style word games directly inside any text channel. Start a session with a slash command, then type your 5-letter guesses as messages — the bot responds with coloured letter tiles showing how close you are.
